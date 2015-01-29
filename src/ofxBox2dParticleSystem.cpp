@@ -23,6 +23,12 @@ void ofxBox2dParticleSystem::setup(b2World * _b2world, int maxCount){
     setup(_b2world, maxCount, 0.0, 6.0, 4.0, color);
 }
 
+void ofxBox2dParticleSystem::setup(b2World *_b2dworld, int _maxCount, float _lifetime, float _radius)
+{
+	ofColor color(127, 200, 255);
+	setup(_b2dworld, _maxCount, _lifetime, _radius, 4.0, color);
+}
+
 void ofxBox2dParticleSystem::setup(b2World * _b2world, int _maxCount, float _lifetime, float _radius, float _particleSize, ofColor _color){
     b2dworld = _b2world;
     particleSystemDef.radius = _radius / OFX_BOX2D_SCALE;
@@ -65,11 +71,11 @@ void ofxBox2dParticleSystem::draw(){
     ofDisablePointSprites();
 }
 
-int32 ofxBox2dParticleSystem::createParticle(ofVec2f position , ofVec2f velocity){
-    createParticle(position.x, position.y, velocity.x, velocity.y);
+int32 ofxBox2dParticleSystem::createParticle(ofVec2f position , ofVec2f velocity, void* userData){
+    return createParticle(position.x, position.y, velocity.x, velocity.y, userData);
 }
 
-int32 ofxBox2dParticleSystem::createParticle(float posx, float posy, float velx, float vely){
+int32 ofxBox2dParticleSystem::createParticle(float posx, float posy, float velx, float vely, void *userData){
     b2ParticleDef pd;
     pd.flags = flag;
     b2Vec2 position = b2Vec2(posx / OFX_BOX2D_SCALE, posy / OFX_BOX2D_SCALE);
@@ -79,7 +85,13 @@ int32 ofxBox2dParticleSystem::createParticle(float posx, float posy, float velx,
     if (lifetime > 0.0) {
         pd.lifetime = lifetime;
     }
+	pd.userData = userData;
     return particleSystem->CreateParticle(pd);
+}
+
+const b2ParticleHandle* ofxBox2dParticleSystem::getParticleHandleFromIndex(const int32 index)
+{
+	return particleSystem->GetParticleHandleFromIndex(index);
 }
 
 void ofxBox2dParticleSystem::applyForce( int32 particle_index, const ofVec2f& force )
@@ -148,4 +160,14 @@ void ofxBox2dParticleSystem::setParticleFlag(b2ParticleFlag _flag){
 
 int ofxBox2dParticleSystem::getParticleCount(){
     return particleSystem->GetParticleCount();
+}
+
+b2Vec2* ofxBox2dParticleSystem::getPositionBuffer()
+{
+	return particleSystem->GetPositionBuffer();
+}
+
+void** ofxBox2dParticleSystem::getUserDataBuffer()
+{
+	return particleSystem->GetUserDataBuffer();
 }
