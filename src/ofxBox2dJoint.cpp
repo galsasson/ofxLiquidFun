@@ -23,7 +23,7 @@ ofxBox2dJoint::ofxBox2dJoint(b2World* b2world, b2Body* body1, b2Body* body2, flo
 }
 
 //----------------------------------------
-ofxBox2dJoint::ofxBox2dJoint(b2World* b2world, b2Body* body1, b2Body* body2, b2Vec2 anchor1, b2Vec2 anchor2, float frequencyHz, float damping, bool bCollideConnected) {
+ofxBox2dJoint::ofxBox2dJoint(b2World* b2world, b2Body* body1, b2Body* body2, ofVec2f anchor1, ofVec2f anchor2, float frequencyHz, float damping, bool bCollideConnected) {
 	ofxBox2dJoint();
 	setup(b2world, body1, body2, anchor1, anchor2, frequencyHz, damping, bCollideConnected);
 }
@@ -36,9 +36,8 @@ void ofxBox2dJoint::setup(b2World* b2world, b2Body* body1, b2Body* body2, float 
 		return;
 	}
 	
-	b2Vec2 a1, a2;
-	a1 = body1->GetWorldCenter();
-	a2 = body2->GetWorldCenter();
+	ofVec2f a1 = worldPtToscreenPt(body1->GetWorldCenter());
+	ofVec2f a2 = worldPtToscreenPt(body2->GetWorldCenter());
 	
 	setup(b2world, body1, body2, a1, a2, frequencyHz, damping, bCollideConnected);
     
@@ -46,7 +45,7 @@ void ofxBox2dJoint::setup(b2World* b2world, b2Body* body1, b2Body* body2, float 
 }
 
 //----------------------------------------
-void ofxBox2dJoint::setup(b2World* b2world, b2Body* body1, b2Body* body2, b2Vec2 anchor1, b2Vec2 anchor2, float frequencyHz, float damping, bool bCollideConnected) {
+void ofxBox2dJoint::setup(b2World* b2world, b2Body* body1, b2Body* body2, ofVec2f anchor1, ofVec2f anchor2, float frequencyHz, float damping, bool bCollideConnected) {
 
 	setWorld(b2world);
 
@@ -56,7 +55,7 @@ void ofxBox2dJoint::setup(b2World* b2world, b2Body* body1, b2Body* body2, b2Vec2
 	}
 
 	b2DistanceJointDef jointDef;
-	jointDef.Initialize(body1, body2, anchor1, anchor2);
+	jointDef.Initialize(body1, body2, screenPtToWorldPt(anchor1), screenPtToWorldPt(anchor2));
 	jointDef.collideConnected	= bCollideConnected;
 	jointDef.frequencyHz		= frequencyHz;
 	jointDef.dampingRatio		= damping;	

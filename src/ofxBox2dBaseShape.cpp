@@ -63,6 +63,12 @@ bool ofxBox2dBaseShape::isBody() {
 	return true;
 }
 
+//----------------------------------------
+b2Body* ofxBox2dBaseShape::getBody() {
+	return body;
+}
+
+
 bool ofxBox2dBaseShape::isFixed() {
 	return density == 0.f ? true : false;
 }

@@ -24,6 +24,7 @@ public:
 	
 	//----------------------------------------
 	bool isBody();
+	b2Body* getBody();
 	
 	//----------------------------------------
     static bool shouldRemove(ofPtr<ofxBox2dBaseShape> shape);

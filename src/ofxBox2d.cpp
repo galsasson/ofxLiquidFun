@@ -344,6 +344,7 @@ void ofxBox2d::createGround(float x1, float y1, float x2, float y2) {
     if(ground!=NULL) world->DestroyBody(ground);
     
 	b2BodyDef bd;
+	bd.type = b2_staticBody;
 	ground = world->CreateBody(&bd);
 	
 	b2EdgeShape shape;
@@ -371,6 +372,7 @@ void ofxBox2d::createBounds(float x, float y, float w, float h) {
 	if(ground!=NULL) world->DestroyBody(ground);
     
 	b2BodyDef bd;
+	bd.type = b2_staticBody;
 	bd.position.Set(0, 0);
 	ground = world->CreateBody(&bd);	
 	
@@ -400,6 +402,39 @@ void ofxBox2d::createBounds(float x, float y, float w, float h) {
 // ------------------------------------------------------ check if shapes are out of bounds
 void ofxBox2d::checkBounds(bool b) {
 	bCheckBounds = b;
+}
+
+
+b2Body* ofxBox2d::createEdge(const ofPolyline &polyline,
+							 b2BodyType type,
+							 float f,
+							 float d,
+							 float r)
+{
+	vector<ofPoint> verts = polyline.getVertices();
+
+	// the node
+	b2BodyDef bd;
+	bd.type = type;
+	bd.position.Set(0, 0);
+	b2Body* line = world->CreateBody(&bd);
+
+	// the shape
+	b2FixtureDef fd;
+	fd.friction = f;
+	fd.density = d;
+	fd.restitution = r;
+
+	b2EdgeShape es;
+
+	for (int i=1; i<verts.size(); i++) {
+		es.Set(worldToBox(verts[i-1]), worldToBox(verts[i]));
+		fd.shape = &es;
+
+		line->CreateFixture(&fd);
+	}
+
+	return line;
 }
 
 // ------------------------------------------------------ 

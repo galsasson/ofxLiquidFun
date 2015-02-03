@@ -10,6 +10,7 @@
 #include "ofxBox2dRect.h"
 
 #include "ofxBox2dJoint.h"
+#include "ofxBox2dRevoluteJoint.h"
 #include "ofxBox2dRender.h"
 #include "ofxBox2dContactListener.h"
 
@@ -126,7 +127,26 @@ public:
 	void		createGround(const ofPoint & p1, const ofPoint & p2);
 	void		createGround(float x1=0, float y1=ofGetHeight(), float x2=ofGetWidth(), float y2=ofGetHeight());
 	void		checkBounds(bool b);
+
+
+	b2Body*		createEdge(const ofPolyline& polyline,
+						   b2BodyType type = b2_staticBody,
+						   float friction = 0.5f,
+						   float density = 1,
+						   float restitution = 0.2f);
+
+	b2Vec2 worldToBox(const ofVec2f& p) {
+		return b2Vec2(p.x / OFX_BOX2D_SCALE,
+					  p.y / OFX_BOX2D_SCALE);
+	}
+
+	ofVec2f boxToWorld(const b2Vec2& p) {
+		return ofVec2f(p.x * OFX_BOX2D_SCALE,
+					   p.y * OFX_BOX2D_SCALE);
+	}
 	
+
+
 	void		update(); 
 	void		draw();
 	void		drawGround();
