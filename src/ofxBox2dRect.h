@@ -20,7 +20,8 @@ public:
 	//------------------------------------------------
 	void setup(b2World * b2dworld, ofRectangle rec);
 	void setup(b2World * b2dworld, float x, float y, float w, float h);
-	   
+	void setup(b2World * b2dworld, float x, float y, float w, float h, int groupIndex);
+
 	//------------------------------------------------
     float getWidth()  { return width * 2;  }
     float getHeight() { return height * 2; }

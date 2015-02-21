@@ -21,8 +21,11 @@ void ofxBox2dRect::setup(b2World * b2dworld, ofRectangle rec) {
 	setup(b2dworld, rec.x, rec.y, rec.width, rec.height);
 }
 
-//------------------------------------------------
 void ofxBox2dRect::setup(b2World * b2dworld, float x, float y, float w, float h) {
+	setup(b2dworld, x, y, w, h, 1);
+}
+//------------------------------------------------
+void ofxBox2dRect::setup(b2World * b2dworld, float x, float y, float w, float h, int groupIndex) {
 	
 	if(b2dworld == NULL) {
 		ofLog(OF_LOG_NOTICE, "- must have a valid world -");
@@ -40,6 +43,7 @@ void ofxBox2dRect::setup(b2World * b2dworld, float x, float y, float w, float h)
 	fixture.density		= density;
 	fixture.friction	= friction;
 	fixture.restitution = bounce;
+	fixture.filter.groupIndex = groupIndex;
 	
 	b2BodyDef bodyDef;
 	if(density == 0.f) bodyDef.type	= b2_staticBody;
