@@ -527,7 +527,7 @@ operator<<(std::ostream& os,const dpoint<NumType,D> &p)
 	 for (unsigned int i=0; i<D-1; ++i)
 		os << p[i] << ", ";
 	return os << p[D-1] << "))";
-    
+
 };
 
 template < class NumType, unsigned D >
@@ -538,7 +538,7 @@ operator>>(std::istream& is,dpoint<NumType,D> &p)
 		 if(!(is >> p[i])){
 			 if(!is.eof()){
 				std::cerr << "Error Reading Point:" 
-					  << is << std::endl;
+					  << is.rdbuf() << std::endl;
 				exit(1);
 			 }
 		 }
