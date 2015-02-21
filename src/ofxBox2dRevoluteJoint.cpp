@@ -88,7 +88,7 @@ void ofxBox2dRevoluteJoint::setWorld(b2World* w) {
 
 //----------------------------------------
 void ofxBox2dRevoluteJoint::setLimits(float low, float high) {
-	joint->SetLimits(ofDegToRad(low), ofDegToRad(PI/2));
+	joint->SetLimits(ofDegToRad(low), ofDegToRad(high));
 }
 
 //----------------------------------------
