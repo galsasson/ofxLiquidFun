@@ -445,7 +445,7 @@ void ofxBox2d::setIterations(int velocityTimes, int positionTimes) {
 
 
 // ------------------------------------------------------ 
-void ofxBox2d::update(float dt) {
+void ofxBox2d::update() {
 	if(world == NULL) {
 		ofLog(OF_LOG_WARNING, "ofxBox2d:: - Need a world, call init first! -");
 		return;
@@ -489,7 +489,7 @@ void ofxBox2d::update(float dt) {
 		
 	}
 	
-	float	timeStep		   = (dt<=0)?(1.0f / fps):dt;
+	float	timeStep		   = (1.0f / fps);
 	world->Step(timeStep, velocityIterations, positionIterations);
 	//world->Validate();	
 	
