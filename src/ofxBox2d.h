@@ -147,7 +147,7 @@ public:
 	
 
 
-	void		update(); 
+	void		update(float dt=0);
 	void		draw();
 	void		drawGround();
         
