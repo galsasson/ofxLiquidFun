@@ -111,8 +111,12 @@ public:
 	/// Remove this node from the list it's currently in.
 	b2IntrusiveListNode* Remove()
 	{
-		m_prev->m_next = m_next;
-		m_next->m_prev = m_prev;
+		if (m_prev) {
+			m_prev->m_next = m_next;
+		}
+		if (m_next) {
+			m_next->m_prev = m_prev;
+		}
 		Initialize();
 		return this;
 	}
