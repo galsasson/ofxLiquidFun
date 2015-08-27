@@ -491,6 +491,7 @@ public:
 	/// Array is length GetParticleCount()
 	/// @return the pointer to the head of the particle-flags array.
 	const uint32* GetFlagsBuffer() const;
+	uint32* GetFlagsBuffer();
 
 	/// Set flags for a particle. See the b2ParticleFlag enum.
 	void SetParticleFlags(int32 index, uint32 flags);
@@ -1405,6 +1406,11 @@ inline uint32 b2ParticleSystem::GetAllGroupFlags() const
 }
 
 inline const uint32* b2ParticleSystem::GetFlagsBuffer() const
+{
+	return m_flagsBuffer.data;
+}
+
+inline uint32* b2ParticleSystem::GetFlagsBuffer()
 {
 	return m_flagsBuffer.data;
 }
