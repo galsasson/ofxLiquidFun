@@ -79,6 +79,25 @@ void ofxBox2dRevoluteJoint::setup(b2World* b2world, b2RevoluteJointDef jointDef)
 }
 
 //----------------------------------------
+void ofxBox2dRevoluteJoint::setupMotor(float speed, float maxTorque)
+{
+	joint->SetMotorSpeed(speed);
+	joint->SetMaxMotorTorque(maxTorque);
+}
+
+//----------------------------------------
+void ofxBox2dRevoluteJoint::enableMotor()
+{
+	joint->EnableMotor(true);
+}
+
+//----------------------------------------
+void ofxBox2dRevoluteJoint::disableMotor()
+{
+	joint->EnableMotor(false);
+}
+
+//----------------------------------------
 void ofxBox2dRevoluteJoint::setWorld(b2World* w) {
 	if(w == NULL) {
 		ofLog(OF_LOG_NOTICE, "ofxBox2dRevoluteJoint :: setWorld : - box2d world needed -");	

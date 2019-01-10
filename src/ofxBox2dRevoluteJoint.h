@@ -23,6 +23,11 @@ public:
     void setup(b2World* b2world, b2RevoluteJointDef jointDef);
 	
 	//----------------------------------------
+	
+	void setupMotor(float speed, float maxTorque);
+	void enableMotor();
+	void disableMotor();
+	
 	bool isSetup();
 	void draw();
 	void destroy();
