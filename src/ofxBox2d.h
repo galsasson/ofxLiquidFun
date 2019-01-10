@@ -129,7 +129,7 @@ public:
 	void		createGround(float x1=0, float y1=ofGetHeight(), float x2=ofGetWidth(), float y2=ofGetHeight());
 	void		checkBounds(bool b);
 	
-	void		update(); 
+	void		update(float dt=-1); 
 	void		draw();
 	void		drawGround();
         
