@@ -1,10 +1,11 @@
-//
-//  ofxBox2dRevoluteJoint.cpp
-//  liquidfun
-//
-//  Created by Gal Sasson on 2/2/15.
-//
-//
+/*
+ *  ofxBox2dRevoluteJoint.cpp
+ *  jointExample
+ *
+ *  Created by Neil Mendoza on 1/10/16.
+ *  Copyright 2016 Neil Mendoza. All rights reserved.
+ *
+ */
 
 #include "ofxBox2dRevoluteJoint.h"
 
@@ -16,64 +17,65 @@ ofxBox2dRevoluteJoint::ofxBox2dRevoluteJoint() {
 }
 
 //----------------------------------------
-ofxBox2dRevoluteJoint::ofxBox2dRevoluteJoint(b2World* b2world, b2Body* body1, b2Body* body2, float frequencyHz, float damping, bool bCollideConnected) {
+ofxBox2dRevoluteJoint::ofxBox2dRevoluteJoint(b2World* b2world, b2Body* body1, b2Body* body2, bool enableLimit, float lowerAngle, float upperAngle, bool bCollideConnected) {
 	ofxBox2dRevoluteJoint();
-	setup(b2world, body1, body2, frequencyHz, damping, bCollideConnected);
+	setup(b2world, body1, body2, enableLimit, lowerAngle, upperAngle, bCollideConnected);
 }
 
 //----------------------------------------
-ofxBox2dRevoluteJoint::ofxBox2dRevoluteJoint(b2World* b2world, b2Body* body1, b2Body* body2, ofVec2f anchor1, ofVec2f anchor2, float frequencyHz, float damping, bool bCollideConnected) {
+ofxBox2dRevoluteJoint::ofxBox2dRevoluteJoint(b2World* b2world, b2Body* body1, b2Body* body2, b2Vec2 anchor, bool enableLimit, float lowerAngle, float upperAngle, bool bCollideConnected) {
 	ofxBox2dRevoluteJoint();
-	setup(b2world, body1, body2, anchor1, anchor2, frequencyHz, damping, bCollideConnected);
+	setup(b2world, body1, body2, anchor, enableLimit, lowerAngle, upperAngle, bCollideConnected);
 }
 
 //----------------------------------------
-void ofxBox2dRevoluteJoint::setup(b2World* b2world, b2Body* body1, b2Body* body2, float frequencyHz, float damping, bool bCollideConnected) {
+ofxBox2dRevoluteJoint::ofxBox2dRevoluteJoint(b2World* b2world, b2RevoluteJointDef jointDef) {
+    ofxBox2dRevoluteJoint();
+    setup(b2world, jointDef);
+}
+
+//----------------------------------------
+void ofxBox2dRevoluteJoint::setup(b2World* b2world, b2Body* body1, b2Body* body2, bool enableLimit, float lowerAngle, float upperAngle, bool bCollideConnected) {
+	
+	if(body1 == NULL || body2 == NULL) {
+		ofLog(OF_LOG_NOTICE, "ofxBox2dRevoluteJoint :: setup : - box2d body is NULL -");
+		return;
+	}
+	
+    b2Vec2 a;
+	a = body1->GetWorldCenter();
+	
+	setup(b2world, body1, body2, a, enableLimit, lowerAngle, upperAngle, bCollideConnected);
+    
+    alive = true;
+}
+
+//----------------------------------------
+void ofxBox2dRevoluteJoint::setup(b2World* b2world, b2Body* body1, b2Body* body2, b2Vec2 anchor, bool enableLimit, float lowerAngle, float upperAngle, bool bCollideConnected) {
 
 	if(body1 == NULL || body2 == NULL) {
 		ofLog(OF_LOG_NOTICE, "ofxBox2dRevoluteJoint :: setup : - box2d body is NULL -");
 		return;
 	}
-
-	ofVec2f a1 = worldPtToscreenPt(body1->GetWorldCenter());
-	ofVec2f a2 = worldPtToscreenPt(body2->GetWorldCenter());
-
-	setup(b2world, body1, body2, a1, a2, frequencyHz, damping, bCollideConnected);
-
-	alive = true;
-}
-
-//----------------------------------------
-void ofxBox2dRevoluteJoint::setup(b2World* b2world, b2Body* body1, b2Body* body2, ofVec2f anchor1, ofVec2f anchor2, float frequencyHz, float damping, bool bCollideConnected) {
-
-	setWorld(b2world);
-
-	if(body1 == NULL || body2 == NULL) {
-		ofLog(OF_LOG_NOTICE, "ofxBox2dRevoluteJoint :: setup : - box2d body is NULL -");
-		return;
-	}
-
 
 	b2RevoluteJointDef jointDef;
-	jointDef.bodyA = body1;
-	jointDef.bodyB = body2;
-	jointDef.localAnchorA = screenPtToWorldPt(anchor1);
-	jointDef.localAnchorB = screenPtToWorldPt(anchor2);
-	jointDef.referenceAngle = body2->GetAngle() - body1->GetAngle();
-	jointDef.collideConnected = false;
-	jointDef.enableLimit = false;
-	jointDef.enableMotor = true;
-	joint = (b2RevoluteJoint*)world->CreateJoint(&jointDef);
+	jointDef.Initialize(body1, body2, anchor);
+	jointDef.collideConnected	= bCollideConnected;
+	jointDef.lowerAngle	= lowerAngle;
+	jointDef.upperAngle = upperAngle;
+    jointDef.enableLimit = enableLimit;
+	
+    setup(b2world, jointDef);
+}
 
-//
-//	b2DistanceJointDef jointDef;
-//	jointDef.Initialize(body1, body2, screenPtToWorldPt(anchor1), screenPtToWorldPt(anchor2));
-//	jointDef.collideConnected	= bCollideConnected;
-//	jointDef.frequencyHz		= frequencyHz;
-//	jointDef.dampingRatio		= damping;
-//	joint						= (b2DistanceJoint*)world->CreateJoint(&jointDef);
+//----------------------------------------
+void ofxBox2dRevoluteJoint::setup(b2World* b2world, b2RevoluteJointDef jointDef) {
 
-	alive						= true;
+    setWorld(b2world);
+    
+    joint = (b2RevoluteJoint*)world->CreateJoint(&jointDef);
+	
+	alive = true;
 }
 
 //----------------------------------------
@@ -84,37 +86,6 @@ void ofxBox2dRevoluteJoint::setWorld(b2World* w) {
 	}
 	world = w;
 }
-
-
-//----------------------------------------
-void ofxBox2dRevoluteJoint::setLimits(float low, float high) {
-	joint->SetLimits(ofDegToRad(low), ofDegToRad(high));
-}
-
-//----------------------------------------
-void ofxBox2dRevoluteJoint::enableLimits(bool enable)
-{
-	joint->EnableLimit(enable);
-}
-
-//----------------------------------------
-void ofxBox2dRevoluteJoint::setMotorSpeed(float speed)
-{
-	joint->SetMotorSpeed(speed);
-}
-
-//----------------------------------------
-void ofxBox2dRevoluteJoint::setMaxMotorTorque(float torque)
-{
-	joint->SetMaxMotorTorque(torque);
-}
-
-//----------------------------------------
-void ofxBox2dRevoluteJoint::enableMotor(bool enable)
-{
-	joint->EnableMotor(enable);
-}
-
 
 //----------------------------------------
 bool ofxBox2dRevoluteJoint::isSetup() {
@@ -133,10 +104,10 @@ bool ofxBox2dRevoluteJoint::isSetup() {
 //----------------------------------------
 void ofxBox2dRevoluteJoint::draw() {
 	if(!alive) return;
-
+	
 	b2Vec2 p1 = joint->GetAnchorA();
 	b2Vec2 p2 = joint->GetAnchorB();
-
+	
 	p1 *= OFX_BOX2D_SCALE;
 	p2 *= OFX_BOX2D_SCALE;
 	ofDrawLine(p1.x, p1.y, p2.x, p2.y);
@@ -152,24 +123,96 @@ void ofxBox2dRevoluteJoint::destroy() {
 	alive = false;
 }
 
+void ofxBox2dRevoluteJoint::setLowerAngle(float lowerAngle)
+{
+    if (joint) joint->SetLimits(lowerAngle, joint->GetUpperLimit());
+    else ofLogError() << "joint is null";
+}
+
+float ofxBox2dRevoluteJoint::getLowerAngle() const
+{
+    if (joint) return joint->GetLowerLimit();
+    else
+    {
+        ofLogError() << "joint is null";
+        return 0.f;
+    }
+}
+
+void ofxBox2dRevoluteJoint::setUpperAngle(float upperAngle)
+{
+    if (joint) joint->SetLimits(joint->GetLowerLimit(), upperAngle);
+    else ofLogError() << "joint is null";
+}
+
+float ofxBox2dRevoluteJoint::getUpperAngle() const
+{
+    if (joint) return joint->GetUpperLimit();
+    else
+    {
+        ofLogError() << "joint is null";
+        return 0.f;
+    }
+}
+
+void ofxBox2dRevoluteJoint::setEnableLimit(bool enableLimit)
+{
+    if (joint) joint->EnableLimit(enableLimit);
+    else ofLogError() << "joint is null";
+}
+
+bool ofxBox2dRevoluteJoint::getEnableLimit() const
+{
+    if (joint) return joint->IsLimitEnabled();
+    else
+    {
+        ofLogError() << "joint is null";
+        return false;
+    }
+}
 
 //----------------------------------------
 ofVec2f ofxBox2dRevoluteJoint::getReactionForce(float inv_dt) const {
 	b2Vec2 vec = getReactionForceB2D(inv_dt);
 	return ofVec2f(vec.x, vec.y);
 }
+
+//----------------------------------------
 b2Vec2 ofxBox2dRevoluteJoint::getReactionForceB2D(float inv_dt) const {
 	if(joint) {
 		return joint->GetReactionForce(inv_dt);
 	}
 	return b2Vec2(0, 0);
 }
+
+//----------------------------------------
 float ofxBox2dRevoluteJoint::getReactionTorque(float inv_dt) const {
 	if(joint) {
 		return (float)joint->GetReactionTorque(inv_dt);
 	}
 	return 0;
 }
+
+//----------------------------------------
+void ofxBox2dRevoluteJoint::setMotorSpeed(float speed)
+{
+	if (joint)
+		joint->SetMotorSpeed(speed);
+}
+
+void ofxBox2dRevoluteJoint::setMaxMotorTorque(float torque)
+{
+	if (joint)
+		joint->SetMaxMotorTorque(torque);
+}
+
+void ofxBox2dRevoluteJoint::enableMotor(bool enable)
+{
+	if (joint)
+		joint->EnableMotor(enable);
+}
+
+
 
 
 

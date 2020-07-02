@@ -33,10 +33,13 @@ void ofxBox2dCircle::setup(b2World * b2dworld, float x, float y, float radius) {
 	fixture.density		= density;
 	fixture.friction	= friction;
 	fixture.restitution	= bounce;
-	
-	if(density == 0.f)	bodyDef.type	= b2_staticBody;
-	else				bodyDef.type	= b2_dynamicBody;
-	
+
+	if (!bodyTypeSet)
+    {
+        if (density == 0.f)	bodyDef.type	= b2_staticBody;
+        else				bodyDef.type	= b2_dynamicBody;
+    }
+
 	bodyDef.position.Set(x/OFX_BOX2D_SCALE, y/OFX_BOX2D_SCALE);
 	
 	body  = b2dworld->CreateBody(&bodyDef);
@@ -140,7 +143,7 @@ void ofxBox2dCircle::draw() {
 	
 	ofPushMatrix();
 	ofTranslate(getPosition().x, getPosition().y, 0);
-	ofRotate(getRotation(), 0, 0, 1);
+	ofRotateDeg(getRotation(), 0, 0, 1);
 	ofDrawCircle(0, 0, radius);
 	
     ofPushStyle();

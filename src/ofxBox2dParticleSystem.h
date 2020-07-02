@@ -22,6 +22,7 @@ public:
     float lifetime;
     ofColor color;
     b2ParticleFlag flag;
+    b2ParticleGroupFlag groupFlag;
     ofImage textureImage;
     bool useTexture;
     
@@ -34,20 +35,19 @@ public:
     
     int32 createParticle(ofVec2f position, ofVec2f velocity, void* userData = NULL);
     int32 createParticle(float position_x, float position_y, float velocisty_x, float velocisty_y, void* userData = NULL);
-
 	const b2ParticleHandle* getParticleHandleFromIndex(const int32 index);
+    
+    b2ParticleGroup*  createRectParticleGroup(ofVec2f position, ofVec2f size, ofColor color);
+    b2ParticleGroup* createCircleParticleGroup(ofVec2f position, float radius, ofColor color);
 	
-    
-    void createRectParticleGroup(ofVec2f position, ofVec2f size, ofColor color);
-    void createCircleParticleGroup(ofVec2f position, float radius, ofColor color);
-    
     void loadImage(string fileName);
     
     void setRadius(float radius);
     void setParticleLifetime(float lifetime);
     void setColor(ofColor color);
     void setParticleFlag(b2ParticleFlag flag);
-    
+    void setParticleGroupFlag(b2ParticleGroupFlag flag);
+
     int getParticleCount();
 	b2Vec2* getPositionBuffer();
 	void** getUserDataBuffer();

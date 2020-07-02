@@ -411,7 +411,7 @@ b2Body* ofxBox2d::createEdge(const ofPolyline &polyline,
 							 float d,
 							 float r)
 {
-	vector<ofPoint> verts = polyline.getVertices();
+	vector<ofDefaultVec3> verts = polyline.getVertices();
 
 	// the node
 	b2BodyDef bd;

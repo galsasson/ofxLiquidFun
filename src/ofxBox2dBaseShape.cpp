@@ -19,7 +19,8 @@ ofxBox2dBaseShape::ofxBox2dBaseShape() {
 	density     = 0.0;
 	bounce		= 0.0;
 	friction	= 0.0;
-	bodyDef.allowSleep = true;
+	//bodyDef.allowSleep = true; // nm: already set in constructor
+	bodyTypeSet = false;
 }
 
 //----------------------------------------
@@ -119,8 +120,13 @@ void ofxBox2dBaseShape::setPhysics(float density, float bounce, float friction) 
 	this->density = density; this->bounce = bounce; this->friction = friction;
 }
 
+//------------------------------------------------
+void ofxBox2dBaseShape::setBodyType(b2BodyType bodyType) {
+    bodyDef.type = bodyType;
+    bodyTypeSet = true;
+}
 
-//------------------------------------------------ 
+//------------------------------------------------
 void* ofxBox2dBaseShape::setData(void*data) {
 	
 	if(data == NULL) {
@@ -195,13 +201,13 @@ void ofxBox2dBaseShape::setPosition(float x, float y) {
 	body->SetAwake(true); // this sounds backwards but that is what the doc says todo...
 }
 
-void ofxBox2dBaseShape::setPosition(ofVec2f p) {
+void ofxBox2dBaseShape::setPosition(glm::vec2 p) {
 	setPosition(p.x, p.y);
 }
 
 //------------------------------------------------ 
-ofVec2f ofxBox2dBaseShape::getPosition() {
-	ofVec2f p;
+glm::vec2 ofxBox2dBaseShape::getPosition() {
+	glm::vec2 p;
 	if(body != NULL) {
         const b2Transform& xf = body->GetTransform();
         b2Vec2 pos      = body->GetLocalCenter();
@@ -212,7 +218,7 @@ ofVec2f ofxBox2dBaseShape::getPosition() {
 }
 
 //------------------------------------------------
-ofVec2f ofxBox2dBaseShape::getB2DPosition() {
+glm::vec2 ofxBox2dBaseShape::getB2DPosition() {
 	return getPosition() / OFX_BOX2D_SCALE;
 }
 
@@ -222,11 +228,11 @@ void ofxBox2dBaseShape::setVelocity(float x, float y) {
 		body->SetLinearVelocity(b2Vec2(x, y));
 	}
 }
-void ofxBox2dBaseShape::setVelocity(ofVec2f p) {
+void ofxBox2dBaseShape::setVelocity(glm::vec2 p) {
 	setVelocity(p.x, p.y);
 }
-ofVec2f ofxBox2dBaseShape::getVelocity() {
-	return ofVec2f(body->GetLinearVelocity().x, body->GetLinearVelocity().y);
+glm::vec2 ofxBox2dBaseShape::getVelocity() {
+	return glm::vec2(body->GetLinearVelocity().x, body->GetLinearVelocity().y);
 }
 
 //------------------------------------------------ 
@@ -243,7 +249,7 @@ void ofxBox2dBaseShape::setDamping(float f) {
 
 
 //------------------------------------------------
-void ofxBox2dBaseShape::addForce(ofVec2f frc, float scale) {
+void ofxBox2dBaseShape::addForce(glm::vec2 frc, float scale) {
 	if(body != NULL) {
 		frc *= scale;
 		body->ApplyForce(b2Vec2(frc.x, frc.y), body->GetPosition(), true);
@@ -251,14 +257,14 @@ void ofxBox2dBaseShape::addForce(ofVec2f frc, float scale) {
 }
 
 //------------------------------------------------
-void ofxBox2dBaseShape::addImpulseForce(ofVec2f pt, ofVec2f amt) {
+void ofxBox2dBaseShape::addImpulseForce(glm::vec2 pt, glm::vec2 amt) {
 	if(body != NULL) {
 		body->ApplyLinearImpulse(b2Vec2(pt.x/OFX_BOX2D_SCALE, pt.y/OFX_BOX2D_SCALE), b2Vec2(amt.x, amt.y), true);
 	}
 }
 
 //------------------------------------------------
-void ofxBox2dBaseShape::addRepulsionForce(ofVec2f pt, float radius, float amt) {
+void ofxBox2dBaseShape::addRepulsionForce(glm::vec2 pt, float radius, float amt) {
 	/*if(body != NULL) {
 	 b2Vec2 P(pt.x/OFX_BOX2D_SCALE, pt.y/OFX_BOX2D_SCALE);
 	 b2Vec2 D = P - body->GetPosition(); 
