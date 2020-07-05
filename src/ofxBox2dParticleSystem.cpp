@@ -41,6 +41,13 @@ void ofxBox2dParticleSystem::setup(b2World * _b2world, int _maxCount, float _lif
     particleSystem = b2dworld->CreateParticleSystem(&particleSystemDef);
 }
 
+void ofxBox2dParticleSystem::setup(b2World* _b2world, b2ParticleSystemDef& def)
+{
+	b2dworld = _b2world;
+	particleSystemDef = def;
+	particleSystem = b2dworld->CreateParticleSystem(&def);
+}
+
 void ofxBox2dParticleSystem::draw(){
     ofFill();
     

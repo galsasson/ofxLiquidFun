@@ -31,6 +31,7 @@ public:
     void setup(b2World * b2dworld, int maxCount);
 	void setup(b2World * b2dworld, int maxCount, float lifetime, float radius);
     void setup(b2World * b2world, int maxCount, float lifetime, float radius, float particleSize, ofColor color);
+    void setup(b2World* b2world, b2ParticleSystemDef& def);
     void draw();
     
     int32 createParticle(ofVec2f position, ofVec2f velocity, void* userData = NULL);
